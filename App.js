@@ -1,23 +1,35 @@
 import React, { Component } from 'react';
-import { Platform, StyleSheet, Text, View, Button } from 'react-native';
+import { Platform, StyleSheet, Text, View, Button, TouchableOpacity } from 'react-native';
 
-const instructions = Platform.select({
-  ios: 'Press Cmd+R to reload,\n' + 'Cmd+D or shake for dev menu',
-  android: 'Double tap R on your keyboard to reload,\n' + 'Shake or press menu button for dev menu',
-});
 
 export default class App extends Component {
+    state = {
+        location: "Fake Location"
+    };
+
+    findCoordinates = () => {
+        navigator.geolocation.getCurrentPosition(
+            position => {
+                const location = JSON.stringify(position);
+                this.setState({ location });
+            },
+            error => Alert.alert(error.message),
+            { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
+        );
+    };
+    
   render() {
     return (
-      <View>
-        <View>
-        <Button title = "Sick"/>
+      <View style={{padding: 50}}>
+        <View style={{flexDirection: 'row'}}>
           <Button title = "Healthy"/>
+          <Button
+            onPress={this.findCoordinates}
+            title = "Sick"
+          />
         </View>
-        <View style={styles.container}>
-          <Text style={styles.welcome}>Welcome to React Native!</Text>
-          <Text style={styles.instructions}>Location will be here once loaded!</Text>
-          <Text style={styles.instructions}>{instructions}</Text>
+        <View>
+            <Text style={styles.welcome}>User location: {this.state.location}</Text>
         </View>
       </View>
     );
@@ -40,5 +52,11 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: '#333333',
     marginBottom: 5,
+  },
+  map: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#F5FCFF',
   },
 });
